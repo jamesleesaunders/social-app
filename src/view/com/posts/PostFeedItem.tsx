@@ -229,8 +229,8 @@ let FeedItemInner = ({
     reason.by.did === currentAccount?.did
 
   const createdAt = AppBskyFeedPost.isRecord(post.record)
-      ? post.record.createdAt
-      : post.indexedAt
+    ? post.record.createdAt
+    : post.indexedAt
 
   /**
    * If `post[0]` in this slice is the actual root post (not an orphan thread),
@@ -241,6 +241,17 @@ let FeedItemInner = ({
   )
     ? rootPost.threadgate.record
     : undefined
+
+  const indexedAt = new Date(post.indexedAt)
+  const createdAt2 = new Date(post.record.createdAt)
+
+  const isBackdated =
+    indexedAt.getTime() - createdAt2.getTime() > 24 * 60 * 60 * 1000
+
+  let calendarsymbol = false
+  if (isBackdated) {
+    calendarsymbol = true
+  }
 
   const [hover, setHover] = useState(false)
   return (
@@ -402,6 +413,7 @@ let FeedItemInner = ({
             timestamp={createdAt}
             postHref={href}
             onOpenAuthor={onOpenAuthor}
+            showCalendar={calendarsymbol}
           />
           {showReplyTo &&
             (parentAuthor || isParentBlocked || isParentNotFound) && (

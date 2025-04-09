@@ -14,6 +14,8 @@ import {niceDate} from '#/lib/strings/time'
 import {isAndroid} from '#/platform/detection'
 import {precacheProfile} from '#/state/queries/profile'
 import {atoms as a, useTheme, web} from '#/alf'
+import {colors} from '#/components/Admonition'
+import {CalendarClock_Stroke2_Corner0_Rounded as CalendarClockIcon} from '#/components/icons/CalendarClock'
 import {WebOnlyInlineLinkText} from '#/components/Link'
 import {ProfileHoverCard} from '#/components/ProfileHoverCard'
 import {Text} from '#/components/Typography'
@@ -26,6 +28,7 @@ interface PostMetaOpts {
   postHref: string
   timestamp: string
   showAvatar?: boolean
+  showCalendar?: boolean
   avatarSize?: number
   onOpenAuthor?: () => void
   style?: StyleProp<ViewStyle>
@@ -34,6 +37,7 @@ interface PostMetaOpts {
 let PostMeta = (opts: PostMetaOpts): React.ReactNode => {
   const t = useTheme()
   const {i18n, _} = useLingui()
+  const danger = t.name === 'light' ? colors.danger.dark : colors.danger.light
 
   const displayName = opts.author.displayName || opts.author.handle
   const handle = opts.author.handle
@@ -133,6 +137,9 @@ let PostMeta = (opts: PostMetaOpts): React.ReactNode => {
           </WebOnlyInlineLinkText>
         )}
       </TimeElapsed>
+      {opts.showCalendar && (
+        <CalendarClockIcon fill={danger} size="sm" aria-hidden />
+      )}
     </View>
   )
 }
