@@ -8,6 +8,7 @@ import {
   ViewabilityConfig,
   ViewToken,
 } from 'react-native'
+import {SystemBars} from 'react-native-edge-to-edge'
 import {
   Gesture,
   GestureDetector,
@@ -77,7 +78,7 @@ import {PostCtrls} from '#/view/com/util/post-ctrls/PostCtrls'
 import {UserAvatar} from '#/view/com/util/UserAvatar'
 import {Header} from '#/screens/VideoFeed/components/Header'
 import {atoms as a, ios, platform, ThemeProvider, useTheme} from '#/alf'
-import {setNavigationBar} from '#/alf/util/navigationBar'
+import {setSystemUITheme} from '#/alf/util/systemUI'
 import {Button, ButtonIcon, ButtonText} from '#/components/Button'
 import {Divider} from '#/components/Divider'
 import {ArrowLeft_Stroke2_Corner0_Rounded as ArrowLeftIcon} from '#/components/icons/Arrow'
@@ -90,6 +91,7 @@ import {ListFooter} from '#/components/Lists'
 import * as Hider from '#/components/moderation/Hider'
 import {RichText} from '#/components/RichText'
 import {Text} from '#/components/Typography'
+import * as bsky from '#/types/bsky'
 import {Scrubber, VIDEO_PLAYER_BOTTOM_INSET} from './components/Scrubber'
 
 function createThreeVideoPlayers(
@@ -125,10 +127,10 @@ export function VideoFeed({}: NativeStackScreenProps<
   useFocusEffect(
     useCallback(() => {
       setMinShellMode(true)
-      setNavigationBar('lightbox', t)
+      setSystemUITheme('lightbox', t)
       return () => {
         setMinShellMode(false)
-        setNavigationBar('theme', t)
+        setSystemUITheme('theme', t)
       }
     }, [setMinShellMode, t]),
   )
@@ -139,6 +141,7 @@ export function VideoFeed({}: NativeStackScreenProps<
   return (
     <ThemeProvider theme="dark">
       <Layout.Screen noInsetTop style={{backgroundColor: 'black'}}>
+        <SystemBars style={{statusBar: 'light', navigationBar: 'light'}} />
         <View
           style={[
             a.absolute,
@@ -694,7 +697,12 @@ function Overlay({
   )
 
   const rkey = new AtUri(post.uri).rkey
-  const record = AppBskyFeedPost.isRecord(post.record) ? post.record : undefined
+  const record = bsky.dangerousIsType<AppBskyFeedPost.Record>(
+    post.record,
+    AppBskyFeedPost.isRecord,
+  )
+    ? post.record
+    : undefined
   const richText = new RichTextAPI({
     text: record?.text || '',
     facets: record?.facets,
@@ -800,7 +808,9 @@ function Overlay({
                           : _(msg`Follow ${handle}`)
                       }
                       accessibilityHint={
-                        profile.viewer?.following ? _(msg`Unfollow user`) : ''
+                        profile.viewer?.following
+                          ? _(msg`Unfollows the user`)
+                          : ''
                       }
                       size="small"
                       variant="solid"
@@ -930,7 +940,7 @@ function ExpandableRichTextView({
       />
       {constrained && !screenReaderEnabled && (
         <Pressable
-          accessibilityHint={_(msg`Tap to expand or collapse post text.`)}
+          accessibilityHint={_(msg`Expands or collapses post text`)}
           accessibilityLabel={expanded ? _(msg`Read less`) : _(msg`Read more`)}
           hitSlop={HITSLOP_20}
           onPress={() => setExpanded(prev => !prev)}

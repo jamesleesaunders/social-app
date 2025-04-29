@@ -1,8 +1,8 @@
 import {useMemo, useState} from 'react'
 import {Modal, View} from 'react-native'
+import {SystemBars} from 'react-native-edge-to-edge'
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller'
 import {useSafeAreaInsets} from 'react-native-safe-area-context'
-import {StatusBar} from 'expo-status-bar'
 import {ComAtprotoAdminDefs, ComAtprotoModerationDefs} from '@atproto/api'
 import {msg, Trans} from '@lingui/macro'
 import {useLingui} from '@lingui/react'
@@ -82,10 +82,10 @@ export function Takendown() {
         variant="solid"
         size="large"
         color="secondary_inverted"
-        label={_(msg`Log out`)}
+        label={_(msg`Sign out`)}
         onPress={() => logoutCurrentAccount('Takendown')}>
         <ButtonText>
-          <Trans>Log Out</Trans>
+          <Trans>Sign Out</Trans>
         </ButtonText>
       </Button>
     )
@@ -126,7 +126,7 @@ export function Takendown() {
       animationType={native('slide')}
       presentationStyle="formSheet"
       style={[web(a.util_screen_outer)]}>
-      {isIOS && <StatusBar style="light" />}
+      {isIOS && <SystemBars style={{statusBar: 'light'}} />}
       <KeyboardAwareScrollView style={[a.flex_1, t.atoms.bg]} centerContent>
         <View
           style={[
